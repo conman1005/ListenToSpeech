@@ -16,8 +16,8 @@ import 'package:lab5/past_speeches.dart';
 
 // Speech Recognition code from https://pub.dev/packages/speech_to_text
 
-void main() => runApp(new MaterialApp(
-  home: MyCounter(),
+void main() => runApp(MaterialApp(
+  home: const MyCounter(),
   routes: <String, WidgetBuilder>{
     "/pastSpeeches": (BuildContext context)=> const MySpeeches()
   }
@@ -66,7 +66,7 @@ class _MyCounterState extends State<MyCounter> {
   }
 
 
-  SpeechToText _speechToText = SpeechToText();
+  final SpeechToText _speechToText = SpeechToText();
   bool _speechEnabled = false;
   String _lastWords = '';
   var speeches = [];
@@ -114,6 +114,7 @@ class _MyCounterState extends State<MyCounter> {
       _lastWords = result.recognizedWords;
     });
     if (_lastWords.isNotEmpty) {
+      // Only write speech when listening has stopped
       if (_speechToText.isNotListening) {
         Speeches speech = Speeches(speeches.length, _lastWords[0], _lastWords);
         speeches.add(speech);
@@ -128,7 +129,7 @@ class _MyCounterState extends State<MyCounter> {
             json = jsonEncode(speech);
           // otherwise end with comma
           } else {
-            json = ", " + jsonEncode(speech);
+            json = ", ${jsonEncode(speech)}";
           }
         // write with starting notation if file doesn't exist.
         } else {
@@ -181,7 +182,7 @@ class _MyCounterState extends State<MyCounter> {
                   const SizedBox(height: 20),
                   const Text("What you Said:"),
                   Container(
-                    padding: EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
                     child: Text(
                       // If listening is active show the recognized words
                       _speechToText.isListening
@@ -208,7 +209,7 @@ class _MyCounterState extends State<MyCounter> {
                         // If not yet listening for speech start, otherwise stop
                         viewSpeechesPage,
                     tooltip: 'View Speeches',
-                    child: Text('View Speeches'),
+                    child: const Text('View Speeches'),
                   ),
                 ],
               );

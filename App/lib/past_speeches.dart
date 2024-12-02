@@ -48,8 +48,8 @@ class MySpeechesState extends State<MySpeeches> {
     for (var json in jsonList) {
       final Map decoded = await jsonDecode(json);
       objectList.add(decoded);
-      debugPrint("JSON: " + decoded['content']);
-      displayText += "Title: " + decoded['title'] + "\n" + decoded['content'] + "\n\n";
+      debugPrint("JSON: ${decoded['content']}");
+      displayText += "Title: ${decoded['title']}\n${decoded['content']}\n\n";
     }
     //var decoded = jsonDecode(json);
     
@@ -99,13 +99,13 @@ class MySpeechesState extends State<MySpeeches> {
                   const Text('INFT-3101 Section 2'),
                   const Text('Speech Recognition'),
                   const SizedBox(height: 20),
-                  Text(testData == "" ? "No memos saved." : "Previous Recordings:\n" + displayText ),
+                  Text(testData == "" ? "No memos saved." : "Previous Recordings:\n$displayText" ),
                   FloatingActionButton(
                     onPressed:
                         // If not yet listening for speech start, otherwise stop
                         viewMainPage,
                     tooltip: 'Back to Main Page',
-                    child: Text('Back'),
+                    child: const Text('Back'),
                   ),
                 ],
               );
@@ -115,5 +115,4 @@ class MySpeechesState extends State<MySpeeches> {
       ),
     );
   }
-
 }
