@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:lab5/main.dart';
 import 'package:lab5/view_speech.dart';
 import 'package:path_provider/path_provider.dart';
-import 'speeches.dart';
+import 'package:lab5/speeches.dart';
 
 import 'package:flutter/material.dart';
 
@@ -71,12 +71,19 @@ class MySpeechesState extends State<MySpeeches> {
       children: [
         for (var object in objectList) Column(
           children: [
-            InkWell(child: Text("Title: ${object['title']}"), onTap: () => {
+            InkWell(child: Text("Title: ${object['title']}", style: const TextStyle(color: Color.fromARGB(255, 0, 95, 204), fontSize: 16)), onTap: () => {
               selectedTitle = object['title'],
               selectedContent = object['content'],
-              viewSpeechPage()
+              viewSpeechPage,
             }),
-            Text(object['content'].length <= 20 ? object['content'] : "${object['content'].toString().substring(0, 20)}..."),
+            Text(object['content'].length <= 20 ? object['content'] : "${object['content'].substring(0, 20)}..."),
+            FloatingActionButton(
+                    onPressed:
+                        viewSpeechPage,
+                    tooltip: 'View Whole Speech',
+                    child: const Text('View'),
+                  ),
+            const SizedBox(height: 20),
           ]
         ),
       ]
@@ -135,22 +142,23 @@ class MySpeechesState extends State<MySpeeches> {
         body: Center(
           child: Builder(
             builder: (context) {
-              return Column(
-                children: [
-                  const Text('Conner Cullity (100760244)'),
-                  const Text('INFT-3101 Section 2'),
-                  const Text('Speech Recognition'),
-                  const SizedBox(height: 20),
-                  Text(testData == "" ? "No memos saved." : "Previous Recordings:\n" ),
-                  contentColumn,
-                  FloatingActionButton(
-                    onPressed:
-                        // If not yet listening for speech start, otherwise stop
-                        viewMainPage,
-                    tooltip: 'Back to Main Page',
-                    child: const Text('Back'),
-                  ),
-                ],
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const Text('Conner Cullity (100760244)'),
+                    const Text('INFT-3101 Section 2'),
+                    const Text('Speech Recognition'),
+                    const SizedBox(height: 20),
+                    Text(testData == "" ? "No memos saved." : "Previous Recordings:\n" ),
+                    contentColumn,
+                    FloatingActionButton(
+                      onPressed:
+                          viewMainPage,
+                      tooltip: 'Back to Main Page',
+                      child: const Text('Back'),
+                    ),
+                  ],
+                )
               );
             },
           ),

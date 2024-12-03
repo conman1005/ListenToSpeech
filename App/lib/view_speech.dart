@@ -48,8 +48,10 @@ class MySpeechState extends State<MySpeech> {
                   const Text('INFT-3101 Section 2'),
                   const Text('Speech Recognition'),
                   const SizedBox(height: 20),
-                  Text('Title: $selectedTitle'),
-                  Text('Title: $selectedContent'),
+                  Text('Title: $selectedTitle', style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 2.0),),
+                  const SizedBox(height: 20),
+                  Text(selectedContent),
+                  const SizedBox(height: 20),
                   FloatingActionButton(
                     onPressed:
                         // If not yet listening for speech start, otherwise stop

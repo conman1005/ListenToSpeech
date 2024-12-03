@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:lab5/speeches.dart';
 import 'package:lab5/past_speeches.dart';
+import 'package:system_theme/system_theme.dart';
 
 //import 'google_fonts';
 
@@ -74,6 +75,7 @@ class _MyCounterState extends State<MyCounter> {
 
   /// This has to happen only once per app
   void _initSpeech() async {
+    await SystemTheme.accentColor.load();
     var status = await Permission.microphone.status;
     if (status.isDenied) {
       status = await Permission.microphone.request();
@@ -94,7 +96,7 @@ class _MyCounterState extends State<MyCounter> {
   void _startListening() async {
     if (_speechToText.isAvailable) {
       await _speechToText.listen(onResult: _onSpeechResult);
-    setState(() {});
+      setState(() {});
     }
   }
 
