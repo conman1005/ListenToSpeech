@@ -71,12 +71,12 @@ class MySpeechesState extends State<MySpeeches> {
       children: [
         for (var object in objectList) Column(
           children: [
-            new InkWell(child: Text("Title: ${object['title']}"), onTap: () => {
+            InkWell(child: Text("Title: ${object['title']}"), onTap: () => {
               selectedTitle = object['title'],
               selectedContent = object['content'],
               viewSpeechPage()
-            }),  //TODO: Create Function to Change to View Speech page with loaded speech
-            Text(object['content']),
+            }),
+            Text(object['content'].length <= 20 ? object['content'] : "${object['content'].toString().substring(0, 20)}..."),
           ]
         ),
       ]
