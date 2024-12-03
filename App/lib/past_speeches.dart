@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:lab5/main.dart';
+import 'package:lab5/view_speech.dart';
 import 'package:path_provider/path_provider.dart';
 import 'speeches.dart';
 
@@ -13,6 +14,10 @@ class MySpeeches extends StatefulWidget {
   @override
   State<MySpeeches> createState() => MySpeechesState();
 }
+
+// These Strings will be used in the view_speeches page to display content
+String selectedTitle = "";
+String selectedContent = "";
 
 class MySpeechesState extends State<MySpeeches> {
 
@@ -66,7 +71,11 @@ class MySpeechesState extends State<MySpeeches> {
       children: [
         for (var object in objectList) Column(
           children: [
-            new InkWell(child: Text("Title: ${object['title']}"), onTap: () => setJson),  //TODO: Create Function to Change to View Speech page with loaded speech
+            new InkWell(child: Text("Title: ${object['title']}"), onTap: () => {
+              selectedTitle = object['title'],
+              selectedContent = object['content'],
+              viewSpeechPage()
+            }),  //TODO: Create Function to Change to View Speech page with loaded speech
             Text(object['content']),
           ]
         ),
@@ -103,6 +112,15 @@ class MySpeechesState extends State<MySpeeches> {
     setState(() {});
   }
 
+  
+  void viewSpeechPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const MySpeech()),
+    );
+
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
