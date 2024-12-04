@@ -1,64 +1,184 @@
-import 'package:lab5/past_speeches.dart';
-
 import 'package:flutter/material.dart';
-
-void main() => runApp(const MySpeech());
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:async';
+import 'package:lab5/past_speeches.dart';
 
 class MySpeech extends StatefulWidget {
   const MySpeech({super.key});
+
   @override
   State<MySpeech> createState() => MySpeechState();
 }
 
 class MySpeechState extends State<MySpeech> {
+  String formattedResponse = '';
+  bool isLoading = false;
 
+  Future<void> sendToChatGPT(String text) async {
+    if (text.isEmpty) {
+      setState(() {
+        formattedResponse = "Error: No text provided for processing.";
+      });
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    final String? apiKey = dotenv.env['OPENAI_API_KEY'];
+
+    if (apiKey == null || apiKey.isEmpty) {
+      setState(() {
+        formattedResponse = "Error: API key not found in .env file.";
+        isLoading = false;
+      });
+      return;
+    }
+
+    final url = Uri.parse("https://api.openai.com/v1/chat/completions");
+    final headers = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $apiKey",
+    };
+    
+    final body = jsonEncode({
+      "model": "gpt-3.5-turbo",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are a helpful assistant that organizes text into clear, readable documents."
+        },
+        {
+          "role": "user",
+          "content": "Organize the following text into a readable document with a title, bullet points, and sections:\n\n$text"
+        }
+      ],
+      "temperature": 0.7,
+    });
+
+    try {
+      final response = await http.post(
+        url, 
+        headers: headers, 
+        body: body
+      ).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          throw TimeoutException('Request timed out');
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        final String aiResponse = data['choices'][0]['message']['content']?.trim() ?? '';
+        
+        setState(() {
+          formattedResponse = aiResponse;
+          isLoading = false;
+        });
+      } else {
+        final errorData = jsonDecode(response.body);
+        setState(() {
+          formattedResponse = "Error: ${errorData['error']['message'] ?? 'Failed to process the request.'}";
+          isLoading = false;
+        });
+      }
+    } on TimeoutException {
+      setState(() {
+        formattedResponse = "Error: Request timed out. Please try again.";
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        formattedResponse = "Error: ${e.toString()}";
+        isLoading = false;
+      });
+    }
+  }
 
   void viewSpeechesPage() {
-    //Navigator.of(context).pushNamed("/pastSpeeches");
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const MySpeeches()),
-    );
-
-    //Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => new MySpeeches()));
-    setState(() {});
+    Navigator.pop(context);  // Changed from push to pop
   }
 
   @override
   Widget build(BuildContext context) {
-    /*ThemeData(
-      textTheme: GoogleFonts.kalamTextTheme(),
-    );*/
-    return MaterialApp( // Root widget
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('My Home Page'),
-        ),
-        body: Center(
-          child: Builder(
-            builder: (context) {
-              return Column(
+    return Scaffold(  // Removed MaterialApp wrapper
+      appBar: AppBar(
+        title: const Text('View Speech'),
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+      ),
+      body: Center(
+        child: isLoading
+            ? const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('TEST AI HERE (100760244)'),
-                  const Text('INFT-3101 Section 2'),
-                  const Text('Speech Recognition'),
-                  const SizedBox(height: 20),
-                  Text('Title: $selectedTitle', style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 2.0),),
-                  const SizedBox(height: 20),
-                  Text(selectedContent),
-                  const SizedBox(height: 20),
-                  FloatingActionButton(
-                    onPressed:
-                        // If not yet listening for speech start, otherwise stop
-                        viewSpeechesPage,
-                    tooltip: 'Back to Speeches Page',
-                    child: const Text('Back'),
-                  ),
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Processing your speech...'),
                 ],
-              );
-            },
-          ),
-        ),
+              )
+            : Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Speech AI Processor',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 20),
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.grey.shade300),
+                        ),
+                        child: SingleChildScrollView(
+                          child: Text(
+                            formattedResponse.isEmpty
+                                ? selectedContent
+                                : formattedResponse,
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () async {
+                            await sendToChatGPT(selectedContent);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
+                            backgroundColor: Colors.blue,
+                          ),
+                          child: const Text(
+                            'Process with AI',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: viewSpeechesPage,
+                          icon: const Icon(Icons.arrow_back),
+                          tooltip: 'Back to Speeches Page',
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
       ),
     );
   }

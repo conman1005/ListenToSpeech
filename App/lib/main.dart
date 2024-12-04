@@ -10,9 +10,14 @@ import 'package:lab5/past_speeches.dart';
 import 'package:system_theme/system_theme.dart';
 import 'package:lab5/home.dart';
 import 'package:lab5/settings.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 
-void main() => runApp(MyApp());
+void main()  async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName:".env");
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
