@@ -1,8 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-import 'package:lab5/main.dart';
-import 'package:path_provider/path_provider.dart';
-import 'speeches.dart';
 import 'package:lab5/past_speeches.dart';
 
 import 'package:flutter/material.dart';

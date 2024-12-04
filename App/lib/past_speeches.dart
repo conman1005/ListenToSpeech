@@ -37,7 +37,7 @@ class MySpeechesState extends State<MySpeeches> {
 
   String displayText = "";
 
-  Column contentColumn = Column();
+  Column contentColumn = const Column();
 
   // Generate a List of Object Maps from the JSON file
   Future<List<Map>> readJson() async {
