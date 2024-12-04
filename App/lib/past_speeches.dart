@@ -74,12 +74,15 @@ class MySpeechesState extends State<MySpeeches> {
             InkWell(child: Text("Title: ${object['title']}", style: const TextStyle(color: Color.fromARGB(255, 0, 95, 204), fontSize: 16)), onTap: () => {
               selectedTitle = object['title'],
               selectedContent = object['content'],
-              viewSpeechPage,
+              viewSpeechPage(),
             }),
             Text(object['content'].length <= 20 ? object['content'] : "${object['content'].substring(0, 20)}..."),
             FloatingActionButton(
-                    onPressed:
-                        viewSpeechPage,
+                    onPressed: () => {
+                      selectedTitle = object['title'],
+                      selectedContent = object['content'],
+                      viewSpeechPage(),
+                    },
                     tooltip: 'View Whole Speech',
                     child: const Text('View'),
                   ),
