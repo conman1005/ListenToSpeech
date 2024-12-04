@@ -21,18 +21,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.light,
-        primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.white,
-        fontFamily: 'San Francisco', // Mimics Apple UI
-      ),
-      home: const Home(),
-      routes: <String, WidgetBuilder>{
-        "/main": (BuildContext context) => const MyCounter(),
-        "/pastSpeeches": (BuildContext context) => const MySpeeches(),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeNotifier,
+      builder: (_, ThemeMode currentMode, __) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData.light(),
+          darkTheme: ThemeData.dark(),
+          themeMode: currentMode,
+          home: const Home(),
+          routes: <String, WidgetBuilder>{
+            "/settings": (BuildContext context) =>
+                SettingsPage(themeNotifier: themeNotifier),
+            "/main": (BuildContext context) => const MyCounter(),
+            "/pastSpeeches": (BuildContext context) => const MySpeeches(),
+          },
+        );
       },
     );
   }
@@ -149,6 +153,14 @@ class _MyCounterState extends State<MyCounter> {
           ),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.pushNamed(context, '/settings');
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
@@ -165,28 +177,30 @@ class _MyCounterState extends State<MyCounter> {
             ),
             const SizedBox(height: 20),
             Container(
-              padding: const EdgeInsets.all(16),
+              constraints: const BoxConstraints(
+                minHeight: 400,
+                maxHeight: 400, // Stable height for the box
+              ),
+              width: double.infinity, // Ensure it takes the full width
               decoration: BoxDecoration(
                 color: Colors.grey.shade200,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Text(
-                _speechToText.isListening
-                    ? 'Listening...'
-                    : _speechEnabled
-                        ? 'Tap the microphone to start listening...'
-                        : 'Speech not available',
-                style: const TextStyle(fontSize: 16, color: Colors.black87),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  _lastWords.isNotEmpty
+                      ? _lastWords // Show the recognized speech
+                      : _speechToText.isListening
+                          ? 'Listening...'
+                          : _speechEnabled
+                              ? 'Tap the microphone to start listening...'
+                              : 'Speech not available',
+                  style: const TextStyle(fontSize: 16, color: Colors.black87),
+                ),
               ),
             ),
             const SizedBox(height: 20),
-            Text(
-              'Last Speech: $_lastWords',
-              style: const TextStyle(
-                fontSize: 18,
-                color: Colors.black54,
-              ),
-            ),
             const Spacer(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
