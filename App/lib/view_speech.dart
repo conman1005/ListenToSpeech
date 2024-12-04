@@ -39,7 +39,7 @@ class MySpeechState extends State<MySpeech> {
             builder: (context) {
               return Column(
                 children: [
-                  const Text('Conner Cullity (100760244)'),
+                  const Text('TEST AI HERE (100760244)'),
                   const Text('INFT-3101 Section 2'),
                   const Text('Speech Recognition'),
                   const SizedBox(height: 20),
