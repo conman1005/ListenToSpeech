@@ -9,11 +9,15 @@ import 'package:lab5/speeches.dart';
 import 'package:lab5/past_speeches.dart';
 import 'package:system_theme/system_theme.dart';
 import 'package:lab5/home.dart';
+import 'package:lab5/settings.dart';
 
-void main() => runApp(const MyApp());
+
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.light);
 
   @override
   Widget build(BuildContext context) {
