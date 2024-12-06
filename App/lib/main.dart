@@ -178,13 +178,11 @@ class _MyListenerState extends State<MyListener> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
+      appBar: AppBar(       
         elevation: 0,
         title: const Text(
           'Speech Recognition',
-          style: TextStyle(
-            color: Colors.black,
+          style: TextStyle(            
             fontSize: 20,
             fontWeight: FontWeight.w600,
           ),
@@ -209,7 +207,7 @@ class _MyListenerState extends State<MyListener> {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.w600,
-                color: Colors.black,
+                
               ),
             ),
             const SizedBox(height: 20),
