@@ -1,3 +1,10 @@
+/*
+ *  Authours:           Conner Cullity and Jy
+ *  Date last Revised:  2024-12-05
+ *  Purpose:            This is an app that is meant to Listen to the User's Speech and save Transcripts. This app also utilizes ChatGPT to analyse the Speech.
+ */
+
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -5,6 +12,8 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:lab5/past_speeches.dart';
 
+
+/// Initialize View Speech Page
 class MySpeech extends StatefulWidget {
   const MySpeech({super.key});
 
@@ -16,6 +25,7 @@ class MySpeechState extends State<MySpeech> {
   String formattedResponse = '';
   bool isLoading = false;
 
+  /// Analyse speech with ChatGPT
   Future<void> sendToChatGPT(String text) async {
     if (text.isEmpty) {
       setState(() {
@@ -99,10 +109,12 @@ class MySpeechState extends State<MySpeech> {
     }
   }
 
+  /// Navigate User back to Speeches List Page
   void viewSpeechesPage() {
     Navigator.pop(context);  // Changed from push to pop
   }
 
+  /// Build View Speeches Page
   @override
   Widget build(BuildContext context) {
     return Scaffold(  // Removed MaterialApp wrapper
