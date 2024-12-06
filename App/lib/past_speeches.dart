@@ -195,7 +195,7 @@ class MySpeechesState extends State<MySpeeches> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              speech['title'] ?? 'Untitled',
+                              'Transcript ${index + 1}',
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
