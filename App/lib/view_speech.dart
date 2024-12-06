@@ -143,21 +143,23 @@ class MySpeechState extends State<MySpeech> {
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 20),
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.grey.shade300),
-                        ),
-                        child: SingleChildScrollView(
-                          child: Text(
-                            formattedResponse.isEmpty
-                                ? selectedContent
-                                : formattedResponse,
-                            style: const TextStyle(fontSize: 16),
-                          ),
+                    // Remove Expanded and specify a fixed size for the box.
+                    // Make sure the text remains black by specifying color.
+                    Container(
+                      width: double.infinity, // Full width
+                      height: 400, // Fixed height
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      child: SingleChildScrollView(
+                        child: Text(
+                          formattedResponse.isEmpty
+                              ? selectedContent
+                              : formattedResponse,
+                          style: const TextStyle(fontSize: 16, color: Colors.black),
                         ),
                       ),
                     ),
