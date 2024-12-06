@@ -63,7 +63,7 @@ class MySpeechState extends State<MySpeech> {
         },
         {
           "role": "user",
-          "content": "Organize the following text into a readable document with a title, bullet points, and sections:\n\n$text"
+          "content": "Organize the following text into a readable document with a title, bullet points, and sections. also generate the response in the language of the text:\n\n$text"
         }
       ],
       "temperature": 0.7,
@@ -111,13 +111,13 @@ class MySpeechState extends State<MySpeech> {
 
   /// Navigate User back to Speeches List Page
   void viewSpeechesPage() {
-    Navigator.pop(context);  // Changed from push to pop
+    Navigator.pop(context); 
   }
 
   /// Build View Speeches Page
   @override
   Widget build(BuildContext context) {
-    return Scaffold(  // Removed MaterialApp wrapper
+    return Scaffold(
       appBar: AppBar(
         title: const Text('View Speech'),
         backgroundColor: Colors.blue,
@@ -143,8 +143,6 @@ class MySpeechState extends State<MySpeech> {
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 20),
-                    // Remove Expanded and specify a fixed size for the box.
-                    // Make sure the text remains black by specifying color.
                     Container(
                       width: double.infinity, // Full width
                       height: 400, // Fixed height

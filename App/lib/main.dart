@@ -4,7 +4,6 @@
  *  Purpose:            This is an app that is meant to Listen to the User's Speech and save Transcripts. This app also utilizes ChatGPT to analyse the Speech.
  */
 
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
@@ -19,11 +18,14 @@ import 'package:lab5/home.dart';
 import 'package:lab5/settings.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+// Global variable to store the selected speech recognition language.
+// Default is "en_US".
+String selectedLanguage = "en_US";
 
 // Initialize Program and load .env variables
-void main()  async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName:".env");
+  await dotenv.load(fileName: ".env");
   runApp(MyApp());
 }
 
@@ -76,6 +78,7 @@ class _MyListenerState extends State<MyListener> {
     final path = await _localPath;
     return File('$path/speeches.json');
   }
+
   /// Write json to speeches.json
   Future<File> writeSpeech(String text) async {
     final file = await _localFile;
@@ -109,7 +112,8 @@ class _MyListenerState extends State<MyListener> {
   /// Listen to User's Speech and write it to _lastWords
   void _startListening() async {
     if (_speechToText.isAvailable) {
-      await _speechToText.listen(onResult: _onSpeechResult);
+      // Use the selectedLanguage global variable to set the locale.
+      await _speechToText.listen(onResult: _onSpeechResult, localeId: selectedLanguage);
       setState(() {});
     }
   }
@@ -119,6 +123,7 @@ class _MyListenerState extends State<MyListener> {
     await _speechToText.stop();
     setState(() {});
   }
+
   /// On end of listening create JSON string of speech then write to speeches.json
   void _onSpeechResult(SpeechRecognitionResult result) async {
     // Get recognized speech
@@ -207,7 +212,6 @@ class _MyListenerState extends State<MyListener> {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.w600,
-                
               ),
             ),
             const SizedBox(height: 20),

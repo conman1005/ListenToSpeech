@@ -4,8 +4,8 @@
  *  Purpose:            This is an app that is meant to Listen to the User's Speech and save Transcripts. This app also utilizes ChatGPT to analyse the Speech.
  */
 
-
 import 'package:flutter/material.dart';
+import 'package:lab5/main.dart'; // Import main to access selectedLanguage
 
 /// Initialize Settings Page with ValueNotifier<ThemeMode>
 class SettingsPage extends StatefulWidget {
@@ -27,7 +27,7 @@ class _SettingsPageState extends State<SettingsPage> {
     {"code": "de_DE", "name": "German"},
   ];
 
-  String _selectedLanguage = "en_US";
+  String _selectedLanguage = selectedLanguage; // Initialize with current global language
 
   /// Build Settings Page
   @override
@@ -58,6 +58,8 @@ class _SettingsPageState extends State<SettingsPage> {
                 if (value != null) {
                   setState(() {
                     _selectedLanguage = value;
+                    // Update the global variable
+                    selectedLanguage = value;
                   });
                 }
               },
