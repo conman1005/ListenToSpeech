@@ -1,5 +1,13 @@
+/*
+ *  Authours:           Conner Cullity and Jy
+ *  Date last Revised:  2024-12-05
+ *  Purpose:            This is an app that is meant to Listen to the User's Speech and save Transcripts. This app also utilizes ChatGPT to analyse the Speech.
+ */
+
+
 import 'package:flutter/material.dart';
 
+/// Initialize Settings Page with ValueNotifier<ThemeMode>
 class SettingsPage extends StatefulWidget {
   final ValueNotifier<ThemeMode> themeNotifier;
 
@@ -10,7 +18,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  // Supported languages
+  /// Supported languages
   final List<Map<String, String>> _languages = [
     {"code": "en_US", "name": "English (US)"},
     {"code": "en_GB", "name": "English (UK)"},
@@ -21,6 +29,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   String _selectedLanguage = "en_US";
 
+  /// Build Settings Page
   @override
   Widget build(BuildContext context) {
     return Scaffold(

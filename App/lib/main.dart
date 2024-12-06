@@ -1,3 +1,10 @@
+/*
+ *  Authours:           Conner Cullity and Jy
+ *  Date last Revised:  2024-12-05
+ *  Purpose:            This is an app that is meant to Listen to the User's Speech and save Transcripts. This app also utilizes ChatGPT to analyse the Speech.
+ */
+
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
@@ -13,12 +20,14 @@ import 'package:lab5/settings.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 
+// Initialize Program and load .env variables
 void main()  async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName:".env");
   runApp(MyApp());
 }
 
+// Initialize app with Themes and Routes
 class MyApp extends StatelessWidget {
   MyApp({super.key});
 
@@ -38,7 +47,7 @@ class MyApp extends StatelessWidget {
           routes: <String, WidgetBuilder>{
             "/settings": (BuildContext context) =>
                 SettingsPage(themeNotifier: themeNotifier),
-            "/main": (BuildContext context) => const MyCounter(),
+            "/main": (BuildContext context) => const MyListener(),
             "/pastSpeeches": (BuildContext context) => const MySpeeches(),
           },
         );
@@ -47,33 +56,39 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyCounter extends StatefulWidget {
-  const MyCounter({super.key});
+/// Create Listener State
+class MyListener extends StatefulWidget {
+  const MyListener({super.key});
   @override
-  State<MyCounter> createState() => _MyCounterState();
+  State<MyListener> createState() => _MyListenerState();
 }
 
-class _MyCounterState extends State<MyCounter> {
+/// Listener Page
+class _MyListenerState extends State<MyListener> {
+  /// Get App's directory on device
   Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
     return directory.path;
   }
 
+  /// Get speeches.json from Device
   Future<File> get _localFile async {
     final path = await _localPath;
     return File('$path/speeches.json');
   }
-
+  /// Write json to speeches.json
   Future<File> writeSpeech(String text) async {
     final file = await _localFile;
     return file.writeAsString(text, mode: FileMode.append);
   }
 
+  // Initialize Speech Variables
   final SpeechToText _speechToText = SpeechToText();
   bool _speechEnabled = false;
   String _lastWords = '';
   var speeches = [];
 
+  /// Initialize SpeechToText once Microphone Permission is Granted
   void _initSpeech() async {
     await SystemTheme.accentColor.load();
     var status = await Permission.microphone.status;
@@ -91,6 +106,7 @@ class _MyCounterState extends State<MyCounter> {
     setState(() {});
   }
 
+  /// Listen to User's Speech and write it to _lastWords
   void _startListening() async {
     if (_speechToText.isAvailable) {
       await _speechToText.listen(onResult: _onSpeechResult);
@@ -98,37 +114,51 @@ class _MyCounterState extends State<MyCounter> {
     }
   }
 
+  /// Stop listening to Speech
   void _stopListening() async {
     await _speechToText.stop();
     setState(() {});
   }
-
+  /// On end of listening create JSON string of speech then write to speeches.json
   void _onSpeechResult(SpeechRecognitionResult result) async {
+    // Get recognized speech
     setState(() {
       _lastWords = result.recognizedWords;
     });
+    // Check if there are any recorded words and make sure it is not listening
     if (_lastWords.isNotEmpty) {
       if (_speechToText.isNotListening) {
+        // Create Speeches object
         Speeches speech = Speeches(speeches.length, _lastWords[0], _lastWords);
+        // add object to speeches List
         speeches.add(speech);
+        // Check speeches.json before adding to file
         final File testRead = await _localFile;
         final bool jsonExists = await testRead.exists();
         String json = "";
+        // Read speeches.json if file exists
         if (jsonExists) {
           final read = await testRead.readAsString();
+
+          // add json string to speeches.json without edits if file is empty
           if (read.isEmpty) {
             json = jsonEncode(speech);
+
+          // Otherwise add a comma before the json string
           } else {
             json = ", ${jsonEncode(speech)}";
           }
+        // add json string to speeches.json without edits if file doesn't exist
         } else {
           json = jsonEncode(speech);
         }
+        // append json string to speeches.json
         writeSpeech(json);
       }
     }
   }
 
+  /// Navigates User to Speeches Page
   void viewSpeechesPage() {
     Navigator.push(
       context,
@@ -137,12 +167,14 @@ class _MyCounterState extends State<MyCounter> {
     setState(() {});
   }
 
+  /// Initialize State and Initialize ListenToSpeech
   @override
   void initState() {
     super.initState();
     _initSpeech();
   }
 
+  /// Build Listener Page
   @override
   Widget build(BuildContext context) {
     return Scaffold(

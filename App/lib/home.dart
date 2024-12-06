@@ -1,3 +1,9 @@
+/*
+ *  Authours:           Conner Cullity and Jy
+ *  Date last Revised:  2024-12-05
+ *  Purpose:            This is an app that is meant to Listen to the User's Speech and save Transcripts. This app also utilizes ChatGPT to analyse the Speech.
+ */
+
 import 'package:flutter/material.dart';
 import 'package:lab5/main.dart';
 
@@ -12,6 +18,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
+  /// Initialize Home Page
   @override
   void initState() {
     super.initState();
@@ -28,18 +35,20 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const MyCounter()),
+          MaterialPageRoute(builder: (context) => const MyListener()),
         );
       }
     });
   }
 
+  /// Dispose Home Page once left
   @override
   void dispose() {
     _controller.dispose(); // Clean up resources
     super.dispose();
   }
 
+  /// Build Home Page
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,7 +57,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           // Navigate to main page on tap
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const MyCounter()),
+            MaterialPageRoute(builder: (context) => const MyListener()),
           );
         },
         child: Stack(

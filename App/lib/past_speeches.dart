@@ -1,10 +1,16 @@
+/*
+ *  Authours:           Conner Cullity and Jy
+ *  Date last Revised:  2024-12-05
+ *  Purpose:            This is an app that is meant to Listen to the User's Speech and save Transcripts. This app also utilizes ChatGPT to analyse the Speech.
+ */
+
+
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:lab5/main.dart';
 import 'package:lab5/view_speech.dart';
-import 'package:lab5/speeches.dart';
 
 void main() => runApp(const MySpeeches());
 
@@ -19,16 +25,19 @@ String selectedTitle = "";
 String selectedContent = "";
 
 class MySpeechesState extends State<MySpeeches> {
+  /// Get App directory from Device
   Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
     return directory.path;
   }
 
+  /// speeches.json
   Future<File> get _localFile async {
     final path = await _localPath;
     return File('$path/speeches.json');
   }
 
+  /// Tile Colours
   List<Map<String, dynamic>> data = [];
   final List<Color> cardColors = [
     Colors.red.shade100,
@@ -39,6 +48,7 @@ class MySpeechesState extends State<MySpeeches> {
     Colors.yellow.shade100,
   ];
 
+  /// Read speeches.json.<br/>Returns a List of Maps representing Speeches from speeches.json.
   Future<List<Map<String, dynamic>>> readJson() async {
     final File file = await _localFile;
     if (!await file.exists()) return [];
@@ -46,7 +56,7 @@ class MySpeechesState extends State<MySpeeches> {
     final String jsonString = await file.readAsString();
     if (jsonString.isEmpty) return [];
 
-    List<String> titles = [];
+    /*List<String> titles = [];
     List<String> contents = [];
     
     for (var json in jsonList) {
@@ -85,36 +95,42 @@ class MySpeechesState extends State<MySpeeches> {
       ]
     );
 
-    contentColumn = column;
+    contentColumn = column;*/
 
     //var decoded = jsonDecode(json);
     
     //testData = json;
-    setState(() {});
+    //setState(() {});
     //return objectList;
+
+    // Decode speehces.json and return a List of Maps
     return (jsonDecode('[$jsonString]') as List)
         .map((e) => e as Map<String, dynamic>)
         .toList();
   }
 
+  /// Read speeches.json and add speeches list to the screen
   Future<void> setJson() async {
     data = await readJson();
     setState(() {});
   }
 
+  /// Initialize State and set up json file
   @override
   void initState() {
     super.initState();
     setJson();
   }
 
+  /// Navigate user to the Main Page
   void viewMainPage() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const MyCounter()),
+      MaterialPageRoute(builder: (context) => const MyListener()),
     );
   }
 
+  /// Navigate user to the View Speech page
   void viewSpeechPage(Map<String, dynamic> speech) {
     setState(() {
       selectedTitle = speech['title'] ?? 'Untitled';
@@ -127,6 +143,7 @@ class MySpeechesState extends State<MySpeeches> {
     );
   }
 
+  /// Build past speeches page
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
